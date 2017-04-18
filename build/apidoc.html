@@ -1,0 +1,246 @@
+<div class="apidocDiv">
+<style>
+/*csslint
+*/
+.apidocDiv {
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.apidocDiv a[href] {
+    color: #33f;
+    font-weight: bold;
+    text-decoration: none;
+}
+.apidocDiv a[href]:hover {
+    text-decoration: underline;
+}
+.apidocCodeCommentSpan {
+    background: #bbf;
+    color: #000;
+    display: block;
+}
+.apidocCodeKeywordSpan {
+    color: #d00;
+    font-weight: bold;
+}
+.apidocCodePre {
+    background: #eef;
+    border: 1px solid;
+    color: #777;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+.apidocFooterDiv {
+    margin-top: 20px;
+    text-align: center;
+}
+.apidocModuleLi {
+    margin-top: 10px;
+}
+.apidocSectionDiv {
+    border-top: 1px solid;
+    margin-top: 20px;
+}
+.apidocSignatureSpan {
+    color: #777;
+    font-weight: bold;
+}
+</style>
+<h1>api documentation for
+    <a
+
+        href="https://github.com/thejsj/rethinkdb-init#readme"
+
+    >rethinkdb-init (v0.2.2)</a>
+</h1>
+<h4>Create all RethinkDB databases, tables and indexes automatically through a schema object</h4>
+<div class="apidocSectionDiv"><a
+    href="#apidoc.tableOfContents"
+    id="apidoc.tableOfContents"
+><h1>table of contents</h1></a><ol>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.rethinkdb-init">module rethinkdb-init</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.rethinkdb-init.rethinkdb-init">
+            function <span class="apidocSignatureSpan"></span>rethinkdb-init
+            <span class="apidocSignatureSpan">(r)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.rethinkdb-init.toString">
+            function <span class="apidocSignatureSpan">rethinkdb-init.</span>toString
+            <span class="apidocSignatureSpan">()</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.rethinkdb-init.toString">module rethinkdb-init.toString</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.rethinkdb-init.toString.toString">
+            function <span class="apidocSignatureSpan">rethinkdb-init.</span>toString
+            <span class="apidocSignatureSpan">()</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+</ol></div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.rethinkdb-init" id="apidoc.module.rethinkdb-init">module rethinkdb-init</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.rethinkdb-init.rethinkdb-init" id="apidoc.element.rethinkdb-init.rethinkdb-init">
+        function <span class="apidocSignatureSpan"></span>rethinkdb-init
+        <span class="apidocSignatureSpan">(r)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">rethinkdb-init = function (r) {
+  // Is there a sane way of checking that this is a RethinkDB instance without importing the module?
+  if (typeof r !== &#x27;function&#x27;) throw new TypeError(&#x27;r must be a RethinkDB instance. Passed instances is a `&#x27; + (typeof r) + &#x27;`&#x27;)
+
+<span class="apidocCodeCommentSpan">  /**
+   * Returns true only if object is not `null` and is not an array
+   *
+   * @param {Any}
+   * @return {Boolean}
+   */
+</span>  var isRealObject = function (value) {
+    if (typeof value === &#x27;object&#x27; &#x26;&#x26; value !== null &#x26;&#x26; !Array.isArray(value)) return true
+    return false
+  }
+
+  /**
+   * Throws an error if the error given is not an `already exists` error
+   *
+   * @param &#x3c;Error&#x3e;
+   */
+  var existsHandler = function (err) {
+    if (err.name === &#x27;ReqlOpFailedError&#x27; &#x26;&#x26; (err.msg || err.message).indexOf(&#x27;already exists&#x27;)) return
+    if (err.name === &#x27;RqlRuntimeError&#x27; &#x26;&#x26; (err.msg || err.message).indexOf(&#x27;already exists&#x27;)) return
+    throw err
+  }
+
+  /**
+   * Maps a table object to an array of promises to create indexes for that table
+   *
+   * @param {Object}        table                - Table object
+   * @param {Object}        table.name           - Name of table
+   * @param {Array&#x3c;String|Object&#x3e;} table.indexes - Array of index
+   * @param {Array&#x3c;String&#x3e;} table.indexes        - Array of strings with index names
+   * @param {Array&#x3c;Object&#x3e;} table.indexes        - Array of objects with index `name`, `indexFunction`, `mutli`, `geo`
+   * @param {String}        db                   - Database name
+   * @param {Object}        conn                 - RethinkDB connection
+   * @return {Array}
+   */
+  var mapIndexes = function (table, db, conn) {
+    return table.indexes.map(function (index) {
+      if (typeof index !== &#x27;object&#x27; &#x26;&#x26; typeof index !== &#x27;string&#x27;) throw new TypeError(&#x27;index entry in table entry must be `Object
+` or `String`&#x27;)
+      if (typeof index === &#x27;string&#x27;) return r.db(db).table(table.name).indexCreate(index).run(conn).catch(existsHandler)
+      if (index.name === undefined) throw new TypeError(&#x27;index entry object in table schema must have a `name` property&#x27;)
+      var opts = []
+      if (index.indexFunction) opts.push(index.indexFunction)
+      if (index.multi || index.geo) opts.push(_.pick(index, [&#x27;multi&#x27;, &#x27;geo&#x27;]))
+
+      return r.db(db).table(table.name)
+        .indexCreate(index.name, opts[0], opts[1])
+        .run(conn)
+        .catch(existsHandler)
+    })
+  }
+
+  /**
+   * Maps a schema object to an array of promises to create tables
+   *
+   * @param {Object}                schema               - Schema for table creation
+   * @param {String}                schema.table         - Name of the table
+   * @param {Object}                schema.table         - Object describing table
+   * @param {String}                schema.table.name    - Name of the table
+   * @param {Array&#x3c;String|Object&#x3e;}  schema.table.indexes - Array of indexes
+   * @param {String}                db                   - Database name
+   * @param {Object}                conn                 - Database connection
+   * @return {Array}
+   */
+  var mapTables = function (schema, db, conn) {
+    return schema.map(function (table) {
+      if (!isRealObject(table) &#x26;&#x26; typeof table !== &#x27;string&#x27;) {
+        throw new TypeError(&#x27;table entry in schema must be `Object` or `String`&#x27;)
+      }
+      if (typeof table === &#x27;string&#x27;) {
+        return r.db(db).tableCreate(table).run(conn).catch(existsHandler)
+      }
+      if (table.name === undefined) throw new TypeError(&#x27;table entry object in schema must have a `name` property&#x27;)
+      var options = _.pick(table, [&#x27;primaryKey&#x27;, &#x27;durability&#x27;, &#x27;shards&#x27;, &#x27;replicas&#x27;, &#x27;primaryReplicaTag&#x27;])
+      return r.db(db).tableCreate(table.name, options).run(conn)
+        .catch(existsHandler)
+        .then(function () {
+          // Create indexes
+          if (table.indexes === undefined) return true
+          if (!Array.isArray(table.indexes)) throw new TypeError(&#x27;Table indexes attribute should be an Array.&#x27;)
+          return q.all(mapIndexes(table, db, conn))
+        })
+        .then(function () {
+          return r.db(db).table(table.name).indexWait().run(conn)
+        })
+    })
+  }
+
+  /** ...</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.rethinkdb-init.toString" id="apidoc.element.rethinkdb-init.toString">
+        function <span class="apidocSignatureSpan">rethinkdb-init.</span>toString
+        <span class="apidocSignatureSpan">()</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">toString = function () {
+    return text;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.rethinkdb-init.toString" id="apidoc.module.rethinkdb-init.toString">module rethinkdb-init.toString</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.rethinkdb-init.toString.toString" id="apidoc.element.rethinkdb-init.toString.toString">
+        function <span class="apidocSignatureSpan">rethinkdb-init.</span>toString
+        <span class="apidocSignatureSpan">()</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function toString() { [native code] }</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocFooterDiv">
+    [ this document was created with
+    <a href="https://github.com/kaizhu256/node-utility2" target="_blank">utility2</a>
+    ]
+</div>
+</div>
