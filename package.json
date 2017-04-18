@@ -1,1 +1,39 @@
-{     "devDependencies": {         "rethinkdb-init": "*",         "electron-lite": "kaizhu256/node-electron-lite#alpha",         "utility2": "kaizhu256/node-utility2#alpha"     },     "name":"npmdoc-rethinkdb-init",     "homepage": "https://github.com/npmdoc/node-npmdoc-rethinkdb-init",     "repository": {         "type": "git",         "url": "https://github.com/npmdoc/node-npmdoc-rethinkdb-init.git"     },     "scripts": {         "build-ci": "utility2 shReadmeTest build_ci.sh"     },     "version": "0.0.1" }
+{
+    "author": "kai zhu <kaizhu256@gmail.com>",
+    "description": "api documentation for [rethinkdb-init (v0.2.2)](https://github.com/thejsj/rethinkdb-init#readme) [![npm package](https://img.shields.io/npm/v/npmdoc-rethinkdb-init.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-rethinkdb-init) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-rethinkdb-init.svg)](https://travis-ci.org/npmdoc/node-npmdoc-rethinkdb-init)",
+    "devDependencies": {
+        "electron-lite": "kaizhu256/node-electron-lite#alpha",
+        "rethinkdb-init": "*",
+        "utility2": "kaizhu256/node-utility2#alpha"
+    },
+    "engines": {
+        "node": ">=4.0"
+    },
+    "homepage": "https://github.com/npmdoc/node-npmdoc-rethinkdb-init",
+    "keywords": [
+        "documentation",
+        "rethinkdb-init"
+    ],
+    "license": "MIT",
+    "main": "lib.npmdoc_rethinkdb_init.js",
+    "name": "npmdoc-rethinkdb-init",
+    "nameAlias": "npmdoc_rethinkdb_init",
+    "nameOriginal": "npmdoc-rethinkdb-init",
+    "os": [
+        "darwin",
+        "linux"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/npmdoc/node-npmdoc-rethinkdb-init.git"
+    },
+    "scripts": {
+        "build-ci": "utility2 shReadmeTest build_ci.sh",
+        "env": "env",
+        "heroku-postbuild": "npm install \"kaizhu256/node-utility2#alpha\" && utility2 shDeployHeroku",
+        "postinstall": "[ ! -f npm_scripts.sh ] || ./npm_scripts.sh postinstall",
+        "start": "PORT=${PORT:-8080} utility2 start test.js",
+        "test": "(set -e; export PORT=$(utility2 shServerPortRandom); utility2 test test.js)"
+    },
+    "version": "0.0.1"
+}
