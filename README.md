@@ -1,4 +1,7 @@
-# api documentation for  [rethinkdb-init (v0.2.2)](https://github.com/thejsj/rethinkdb-init#readme)  [![npm package](https://img.shields.io/npm/v/npmdoc-rethinkdb-init.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-rethinkdb-init) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-rethinkdb-init.svg)](https://travis-ci.org/npmdoc/node-npmdoc-rethinkdb-init)
+# npmdoc-rethinkdb-init
+
+#### basic api documentation for  [rethinkdb-init (v0.2.2)](https://github.com/thejsj/rethinkdb-init#readme)  [![npm package](https://img.shields.io/npm/v/npmdoc-rethinkdb-init.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-rethinkdb-init) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-rethinkdb-init.svg)](https://travis-ci.org/npmdoc/node-npmdoc-rethinkdb-init)
+
 #### Create all RethinkDB databases, tables and indexes automatically through a schema object
 
 [![NPM](https://nodei.co/npm/rethinkdb-init.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.com/package/rethinkdb-init)
@@ -65,7 +68,8 @@
     "scripts": {
         "test": "./node_modules/mocha/bin/mocha --bail -t 5000 --slow 0 ./test"
     },
-    "version": "0.2.2"
+    "version": "0.2.2",
+    "bin": {}
 }
 ```
 
